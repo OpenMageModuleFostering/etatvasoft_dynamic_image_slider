@@ -34,7 +34,7 @@
 			</slider>
         </routers>
     </admin>
-    <adminhtml>
+    <!--<adminhtml>
 		<menu>
 			<slider module="slider">
 				<title>Slider</title>
@@ -88,7 +88,7 @@
 				</slider>
 			</updates>
 		</layout>
-    </adminhtml>   
+    </adminhtml>-->   
     <global>
         <models>
             <slider>
@@ -153,6 +153,7 @@
 				<imagewidth>900</imagewidth>
 				<imageheight>450</imageheight>
 				<left>740</left>
+                <top>370</top>
 			</slider>
  		</slider>
 	</default>

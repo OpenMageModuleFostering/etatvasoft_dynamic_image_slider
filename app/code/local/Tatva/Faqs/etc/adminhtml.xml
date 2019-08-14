@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+    <adminhtml>
+		<menu>
+			<faqs module="faqs">
+				<title>Faqs</title>
+				<sort_order>71</sort_order>               
+				<children>
+					<items module="faqs">
+						<title>Manage Items</title>
+						<sort_order>0</sort_order>
+						<action>faqs/adminhtml_faqs</action>
+					</items>
+				</children>
+			</faqs>
+		</menu>
+		<acl>
+			<resources>
+				<all>
+					<title>Allow Everything</title>
+				</all>
+				<admin>
+					<children>
+						<Tatva_Faqs>
+							<title>Faqs Module</title>
+							<sort_order>10</sort_order>
+						</Tatva_Faqs>
+					</children>
+				</admin>
+			</resources>
+		</acl>
+		<layout>
+			<updates>
+				<faqs>
+					<file>faqs.xml</file>
+				</faqs>
+			</updates>
+		</layout>
+    </adminhtml>
