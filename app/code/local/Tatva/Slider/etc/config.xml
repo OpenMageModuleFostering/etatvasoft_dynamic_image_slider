@@ -34,7 +34,7 @@
 			</slider>
         </routers>
     </admin>
-    <!--<adminhtml>
+    <adminhtml>
 		<menu>
 			<slider module="slider">
 				<title>Slider</title>
@@ -88,8 +88,19 @@
 				</slider>
 			</updates>
 		</layout>
-    </adminhtml>-->   
+    </adminhtml>   
     <global>
+    <events>
+   <admin_system_config_changed_section_slider>
+    <observers>
+       <Tatva_Slider_Model_Observer>
+           <type>model</type>
+           <class>Tatva_Slider_Model_Observer</class>
+           <method>saveCmsPageObserve</method>
+           </Tatva_Slider_Model_Observer>
+       </observers>
+  </admin_system_config_changed_section_slider>
+</events>
         <models>
             <slider>
                 <class>Tatva_Slider_Model</class>
@@ -153,7 +164,6 @@
 				<imagewidth>900</imagewidth>
 				<imageheight>450</imageheight>
 				<left>740</left>
-                <top>370</top>
 			</slider>
  		</slider>
 	</default>

@@ -7,10 +7,10 @@ class Tatva_Slider_Adminhtml_SliderController extends Mage_Adminhtml_Controller_
 		$this->loadLayout()
 			->_setActiveMenu('slider/items')
 			->_addBreadcrumb(Mage::helper('adminhtml')->__('Slider Manager'), Mage::helper('adminhtml')->__('Slider Manager'));
-		
+
 		return $this;
 	}
- 
+
 	public function indexAction() {
 		$this->_initAction()
 			->renderLayout();
@@ -50,128 +50,145 @@ class Tatva_Slider_Adminhtml_SliderController extends Mage_Adminhtml_Controller_
 		$this->_forward('edit');
 	}
 
-	public function saveAction()
-    {
-		if ($data = $this->getRequest()->getPost())
-        {
-            $collection = Mage::getModel('slider/slider')->getCollection();
-            $collection->addFieldToFilter('title',$data['title']);
-            if($this->getRequest()->getParam('id'))
-            {
-                $collection->addFieldToFilter('slider_id',array('neq' => $this->getRequest()->getParam('id')));
-            }
-
-            if($collection->getData())
-            {
-                Mage::getSingleton('adminhtml/session')->addError(Mage::helper('slider')->__('Slider with same title "%s" already exist.', $data['title']));
-                Mage::getSingleton('adminhtml/session')->setFormData($data);
-                $this->_redirect('*/*/edit', array('id' => $this->getRequest()->getParam('id')));
-                return;
-            }
-
-			if(isset($_FILES['filename']['name']) && $_FILES['filename']['name'] != '')
-            {
-			    if( $this->getRequest()->getParam('id') > 0 )
-                {
-    				$model = Mage::getModel('slider/slider')->load($this->getRequest()->getParam('id'));
-                    if($model->getfilename() != "")
-                    {
-                        // path of the resized image to be saved
-                        // remove file if it already exist
-                        $imageUrl = Mage::getBaseDir('media').DS."customerslider".DS.$model->getfilename();
-                        $imageResized = Mage::getBaseDir('media').DS."customerslider".DS."thumbnail".DS.$model->getfilename();
-
-                        if(file_exists($imageUrl))
-                        {
-                            unlink($imageUrl);
-                            unlink($imageResized);
-                        }
-                    }
-    			}
-				try
-                {
-				    $date = date('Ymdhis');
-					/* Starting upload */	
-					$uploader = new Varien_File_Uploader('filename');
-
-					// Any extention would work
-	           		$uploader->setAllowedExtensions(array('jpg','jpeg','gif','png'));
-					$uploader->setAllowRenameFiles(false);
-					
-					// Set the file upload mode 
-					// false -> get the file directly in the specified folder
-					// true -> get the file in the product like folders (file.jpg will go in something like /media/f/i/file.jpg)
-					$uploader->setFilesDispersion(false);
-
-                    $filedet = pathinfo($_FILES['filename']['name']);
-
-					// We set media as the upload dir
-					$path = Mage::getBaseDir('media').DS.'customerslider'.DS;
-					$uploader->save($path, $filedet['filename'].$date.'.'.$filedet['extension'] );
-
-                    // actual path of image
-                    $imageUrl = Mage::getBaseDir('media').DS."customerslider".DS.$filedet['filename'].$date.'.'.$filedet['extension'];
-
-                    // path of the resized image to be saved
-                    // here, the resized image is saved in media/resized folder
-                    $imageResized = Mage::getBaseDir('media').DS."customerslider".DS."thumbnail".DS.$filedet['filename'].$date.'.'.$filedet['extension'];
-
-                    // resize image only if the image file exists and the resized image file doesn't exist
-                    // the image is resized proportionally with the width/height 135px
-                    if (!file_exists($imageResized)&&file_exists($imageUrl))
-                    {
-                        $imageObj = new Varien_Image($imageUrl);
-                        $imageObj->constrainOnly(TRUE);
-                        $imageObj->keepAspectRatio(TRUE);
-                        $imageObj->keepFrame(FALSE);
-                        $imageObj->resize(100, 100);
-                        $imageObj->save($imageResized);
-                    }
-
-				}
-                catch (Exception $e){
-		        }
-	        
-		        //this way the name is saved in DB
-	  			$data['filename'] = $filedet['filename'].$date.'.'.$filedet['extension'];
-			}
-
-			$model = Mage::getModel('slider/slider');
-			$model->setData($data)
-				->setId($this->getRequest()->getParam('id'));
-			
-			try
-            {
-				if ($model->getCreatedTime == NULL || $model->getUpdateTime() == NULL) {
-					$model->setCreatedTime(now())
-						->setUpdateTime(now());
-				} else {
-					$model->setUpdateTime(now());
-				}	
-				
-				$model->save();
-				Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('slider')->__('Slide was successfully saved'));
-				Mage::getSingleton('adminhtml/session')->setFormData(false);
-
-				if ($this->getRequest()->getParam('back')) {
-					$this->_redirect('*/*/edit', array('id' => $model->getId()));
-					return;
-				}
-				$this->_redirect('*/*/');
-				return;
-            }
-            catch (Exception $e)
-            {
-                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
-                Mage::getSingleton('adminhtml/session')->setFormData($data);
-                $this->_redirect('*/*/edit', array('id' => $this->getRequest()->getParam('id')));
-                return;
-            }
+	public function saveAction(){
+        //5MB =5242880 bytes
+      if($_FILES['filename']['size']>5242880){
+            $data = $this->getRequest()->getPost();
+            Mage::getSingleton('adminhtml/session')->addError(Mage::helper('slider')->__('File size exceeded'));
+           Mage::getSingleton('adminhtml/session')->setFormData($data);
+           $this->_redirect('*/*/edit', array('id' => $this->getRequest()->getParam('id')));
+           return;
         }
-        Mage::getSingleton('adminhtml/session')->addError(Mage::helper('slider')->__('Unable to find item to save'));
-        $this->_redirect('*/*/');
-	}
- 
+      else{
+			if ($data = $this->getRequest()->getPost()){
+                $collection = Mage::getModel('slider/slider')->getCollection();
+                $collection->addFieldToFilter('title',$data['title']);
+                if($this->getRequest()->getParam('id')){
+                    $collection->addFieldToFilter('slider_id',array('neq' => $this->getRequest()->getParam('id')));
+                }
+
+                if($collection->getData()){
+                    Mage::getSingleton('adminhtml/session')->addError(Mage::helper('slider')->__('Slider with same title "%s" already exist.', $data['title']));
+                    Mage::getSingleton('adminhtml/session')->setFormData($data);
+                    $this->_redirect('*/*/edit', array('id' => $this->getRequest()->getParam('id')));
+                    return;
+                }
+
+                  if(isset($_FILES['filename']['name']) && $_FILES['filename']['name'] != '')
+					{
+						if( $this->getRequest()->getParam('id') > 0 ){
+							$model = Mage::getModel('slider/slider')->load($this->getRequest()->getParam('id'));
+							  if($model->getfilename() != ""){
+								  $imageUrl = Mage::getBaseDir('media').DS."customerslider".DS."original".DS.$model->getfilename();
+								  $imageResized = Mage::getBaseDir('media').DS."customerslider".DS."thumbnail".DS.$model->getfilename();
+								  $imageSliderResized = Mage::getBaseDir('media').DS."customerslider".DS."slider".DS.$model->getfilename();
+
+								  if(file_exists($imageUrl)){
+									  unlink($imageUrl);
+									  unlink($imageResized);
+									 unlink($imageSliderResized);	
+									}
+								}
+						}
+						try{
+							$date = date('Ymdhis');
+							$uploader = new Varien_File_Uploader('filename');
+							  $uploader->setAllowedExtensions(array('jpg','jpeg','gif','png'));
+
+							$uploader->setAllowRenameFiles(false);
+
+							// Set the file upload mode
+							// false -> get the file directly in the specified folder
+							// true -> get the file in the product like folders (file.jpg will go in something like /media/f/i/file.jpg)
+							$uploader->setFilesDispersion(false);
+
+							  $filedet = pathinfo($_FILES['filename']['name']);
+
+							// We set media as the upload dir
+							$path = Mage::getBaseDir('media').DS.'customerslider'.DS.'original'.DS;
+							  $uploader->save($path, $filedet['filename'].$date.'.'.$filedet['extension'] );
+							  $original_image_path =  $path.$filedet['filename'].$date.'.'.$filedet['extension'];
+							  list($original_image_width, $original_image_height, $type, $attr) = getimagesize($original_image_path);
+							  // actual path of image
+							  $imageUrl = Mage::getBaseDir('media').DS."customerslider".DS."original".DS.$filedet['filename'].$date.'.'.$filedet['extension'];
+							  $file = $filedet['filename'].$date.'.'.$filedet['extension'];
+							  // path of the resized image to be saved
+							  // here, the resized image is saved in media/resized folder
+
+
+							 $thumbnail_imageUrl = Mage::getBaseDir('media').DS."customerslider".DS."thumbnail".DS.$file;
+							 $slider_imageUrl = Mage::getBaseDir('media').DS."customerslider".DS."slider".DS.$file;
+
+							  // resize image only if the image file exists and the resized image file doesn't exist
+							  // the image is resized proportionally with the width/height 135px
+							  if(file_exists($imageUrl)){
+								  $imageObj = new Varien_Image($imageUrl);
+								  $imageObj->constrainOnly(TRUE);
+								  $imageObj->keepAspectRatio(TRUE);
+								  $imageObj->keepFrame(FALSE);
+								  $imageObj->resize(100, 100);
+								  $imageObj->save($thumbnail_imageUrl);
+
+								  $resized_image_width = Mage::getStoreConfig('slider/slider/imagewidth');
+								  $resized_image_height = Mage::getStoreConfig('slider/slider/imageheight');
+
+								  $imageObjCustom = new Varien_Image($imageUrl);
+								  if($original_image_width!=$resized_image_width || $original_image_height!=$resized_image_height){
+										$imageObjCustom->constrainOnly(TRUE);
+										$imageObjCustom->keepFrame(FALSE);
+										$imageObjCustom->resize($resized_image_width, $resized_image_height);
+										$imageObjCustom->save($slider_imageUrl);
+									}
+								  else{
+										$imageObjCustom->save($slider_imageUrl);
+									}
+
+
+								}
+                        }
+							catch (Exception $e){
+							}
+
+						//this way the name is saved in DB
+						$data['filename'] = $filedet['filename'].$date.'.'.$filedet['extension'];
+      			    }
+            }
+
+
+    			$model = Mage::getModel('slider/slider');
+    			$model->setData($data)
+    				->setId($this->getRequest()->getParam('id'));
+
+    			try{
+    				if ($model->getCreatedTime == NULL || $model->getUpdateTime() == NULL) {
+    					$model->setCreatedTime(now())
+    						->setUpdateTime(now());
+    				} else {
+    					$model->setUpdateTime(now());
+    				}
+    				$model->save();
+    				Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('slider')->__('Slide was successfully saved'));
+    				Mage::getSingleton('adminhtml/session')->setFormData(false);
+
+    				if ($this->getRequest()->getParam('back')) {
+    					$this->_redirect('*/*/edit', array('id' => $model->getId()));
+    					return;
+    				}
+    				$this->_redirect('*/*/');
+    				return;
+                }
+                catch (Exception $e)
+                {
+                    Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+                    Mage::getSingleton('adminhtml/session')->setFormData($data);
+                    $this->_redirect('*/*/edit', array('id' => $this->getRequest()->getParam('id')));
+                    return;
+                }
+		 Mage::getSingleton('adminhtml/session')->addError(Mage::helper('slider')->__('Unable to find item to save'));
+          $this->_redirect('*/*/');
+		}
+    }
+
 	public function deleteAction()
     {
 		if( $this->getRequest()->getParam('id') > 0 )
@@ -181,14 +198,16 @@ class Tatva_Slider_Adminhtml_SliderController extends Mage_Adminhtml_Controller_
 				$model = Mage::getModel('slider/slider')->load($this->getRequest()->getParam('id'));
                 if($model->getfilename() != "")
                 {
-                    $imageUrl = Mage::getBaseDir('media').DS."customerslider".DS.$model->getfilename();
+                    $imageUrl = Mage::getBaseDir('media').DS."customerslider".DS."original".DS.$model->getfilename();
 
                     // path of the resized image to be saved
                     // here, the resized image is saved in media/resized folder
+                    $imageSlider = Mage::getBaseDir('media').DS."customerslider".DS."slider".DS.$model->getfilename();
                     $imageResized = Mage::getBaseDir('media').DS."customerslider".DS."thumbnail".DS.$model->getfilename();
 
                     if(file_exists($imageUrl))
                     {
+                        unlink($imageSlider);
                         unlink($imageUrl);
                         unlink($imageResized);
                     }
@@ -196,7 +215,7 @@ class Tatva_Slider_Adminhtml_SliderController extends Mage_Adminhtml_Controller_
 
 				$model->setId($this->getRequest()->getParam('id'))
 					->delete();
-					 
+
 				Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('Slide was successfully deleted'));
 				$this->_redirect('*/*/');
 			}
@@ -219,6 +238,19 @@ class Tatva_Slider_Adminhtml_SliderController extends Mage_Adminhtml_Controller_
                 foreach ($sliderIds as $sliderId) {
                     $slider = Mage::getModel('slider/slider')->load($sliderId);
                     $slider->delete();
+                    $imageUrl = Mage::getBaseDir('media').DS."customerslider".DS."original".DS.$slider->getfilename();
+
+                    // path of the resized image to be saved
+                    // here, the resized image is saved in media/resized folder
+                    $imageSlider = Mage::getBaseDir('media').DS."customerslider".DS."slider".DS.$slider->getfilename();
+                    $imageResized = Mage::getBaseDir('media').DS."customerslider".DS."thumbnail".DS.$slider->getfilename();
+
+                    if(file_exists($imageUrl))
+                    {
+                        unlink($imageSlider);
+                        unlink($imageUrl);
+                        unlink($imageResized);
+                    }
                 }
                 Mage::getSingleton('adminhtml/session')->addSuccess(
                     Mage::helper('adminhtml')->__(

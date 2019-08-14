@@ -36,7 +36,7 @@
     						<config>
     							<children>
     								<slider translate="title" module="slider">
-    									<title>Tatvasoft</title>
+    									<title>Slider</title>
     								</slider>
     							</children>
     						</config>

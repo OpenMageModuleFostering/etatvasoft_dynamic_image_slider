@@ -22,7 +22,7 @@ class Tatva_Slider_Block_Adminhtml_Slider_Edit_Tab_Form extends Mage_Adminhtml_B
       $after_html = '';
       if( $slider->getFilename() )
       {
-          $path = Mage::getBaseUrl('media')."customerslider/".$slider->getFilename();
+          $path = Mage::getBaseUrl('media')."customerslider/original/".$slider->getFilename();
           $after_html = '<a onclick="imagePreview(slider); return false;" href="'.$path.'">
                   <img height="22" width="22" class="small-image-preview v-middle" alt="'.$slider->getFilename().'" title="'.$slider->getFilename().'" id="slider" src="'.$path.'"/>
                   </a>';
@@ -47,6 +47,7 @@ class Tatva_Slider_Block_Adminhtml_Slider_Edit_Tab_Form extends Mage_Adminhtml_B
           'after_element_html' => $after_html,
           'class'     => (($slider->getfilename()) ? '' : 'required-entry'),
           'required'  => (($slider->getfilename()) ? false : true),
+          'note'      => Mage::helper('slider')->__('Upload upto 5 MB'),
 	  ));
 
       /**
