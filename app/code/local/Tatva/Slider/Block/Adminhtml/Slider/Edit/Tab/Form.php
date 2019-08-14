@@ -65,7 +65,7 @@ class Tatva_Slider_Block_Adminhtml_Slider_Edit_Tab_Form extends Mage_Adminhtml_B
           $fieldset->addField('store_id', 'hidden', array (
                   'name' => 'stores[]',
                   'value' => Mage::app()->getStore(true)->getId() ));
-          $model->setStoreId(Mage::app()->getStore(true)->getId());
+          $fieldset->setStoreId(Mage::app()->getStore(true)->getId());
       }
 
       $fieldset->addField('status', 'select', array(
