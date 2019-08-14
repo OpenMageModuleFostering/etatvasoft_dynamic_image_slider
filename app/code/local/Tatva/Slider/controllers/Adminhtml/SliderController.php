@@ -1,6 +1,6 @@
 <?php
 
-class Tatva_Slider_Adminhtml_SliderController extends Mage_Adminhtml_Controller_action
+class Tatva_Slider_Adminhtml_SliderController extends Mage_Adminhtml_Controller_Action
 {
 
 	protected function _initAction() {

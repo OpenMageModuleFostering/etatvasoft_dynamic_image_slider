@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <config>
     <tabs>
-        <slider translate="label" module="slider">
+        <tatva translate="label" module="slider">
             <label>Tatvasoft</label>
             <sort_order>101</sort_order>
-        </slider>
+        </tatva>
     </tabs>
     <sections>
         <slider translate="label" module="slider">
             <label>Slider Configuration</label>
             <class>separator-top</class>
-            <tab>slider</tab>
+            <tab>tatva</tab>
             <frontend_type>text</frontend_type>
             <sort_order>10</sort_order>
             <show_in_default>1</show_in_default>
