@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<adminhtml>
+		<menu>
+			<press module="press">
+				<title>Press</title>
+				<sort_order>71</sort_order>
+				<children>
+					<items module="press">
+						<title>Manage Items</title>
+						<sort_order>0</sort_order>
+						<action>press/adminhtml_press</action>
+					</items>
+				</children>
+			</press>
+		</menu>
+		<acl>
+			<resources>
+				<all>
+					<title>Allow Everything</title>
+				</all>
+				<admin>
+                    <children>
+    					<children>
+    						<Tatva_Press>
+    							<title>Press Module</title>
+    							<sort_order>10</sort_order>
+    						</Tatva_Press>
+    					</children>
+    					<system>
+           					<children>
+           						<config>
+           							<children>
+           								<press translate="title" module="press">
+           									<title>Press</title>
+           								</press>
+           							</children>
+           						</config>
+           					</children>
+           				</system>
+                    </children>
+				</admin>
+			</resources>
+		</acl>
+		<layout>
+			<updates>
+				<press>
+					<file>press.xml</file>
+				</press>
+			</updates>
+		</layout>
+    </adminhtml>

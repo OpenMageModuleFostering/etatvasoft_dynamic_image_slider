@@ -24,7 +24,7 @@ class Tatva_Slider_Block_Adminhtml_Slider_Edit_Tabs extends Mage_Adminhtml_Block
               'active' => true,
           )
       );
-
+	
       return $return;
   }
 }
