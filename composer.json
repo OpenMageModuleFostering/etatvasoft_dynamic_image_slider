@@ -1,7 +1,7 @@
 {
-    "name": "OpenMageModuleFostering\/Etatvasoft_Dynamic_Image_Slider",
+    "name": "openmage-module-fostering\/etatvasoft_dynamic_image_slider",
     "type": "magento-module",
-    "license": "Open-Software-License-(OSL)",
+    "license": "OSL-3.0",
     "homepage": "",
     "description": "This Extension is very simple and easy to install and have lots of dynamic feature that helps shop owner to show their shop feature on innovative ways.",
     "authors": [
