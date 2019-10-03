@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/Etatvasoft_Dynamic_Image_Slider",
+    "name": "OpenMageModuleFostering\/Etatvasoft_Dynamic_Image_Slider",
     "type": "magento-module",
     "license": "Open-Software-License-(OSL)",
     "homepage": "",
     "description": "This Extension is very simple and easy to install and have lots of dynamic feature that helps shop owner to show their shop feature on innovative ways.",
     "authors": [
-    {
-        "name": "Etatvasoft",
-        "email": "etatvasoft.magentodevelopment@gmail.com"
-    }
-],
+        {
+            "name": "Etatvasoft",
+            "email": "etatvasoft.magentodevelopment@gmail.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
